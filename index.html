@@ -90,7 +90,10 @@
 	</div>
 	<div class="container" style="padding: 5px 15px">
 		<span>Slide : </span><span id="message"></span><br/>
-		<span>Interval : </span><span id="interval"></span>
+		<span>Interval : </span><span id="interval"></span><br/>
+		<span>New Interval (ms) : </span>
+		<input type="number" id="new-interval">
+		<button id="change-interval">Change</button>
 	</div>
 	<script>
 		function createSlider(containerID) {
@@ -158,6 +161,12 @@
 				obj.isPlay = false;
 			}
 
+			obj.changeInterval = function(interval) {
+				obj.stop();
+				obj.interval = interval;
+				obj.start();
+			}
+
 			obj.init();
 			obj.start();
 			window.addEventListener("resize", function() {
@@ -186,6 +195,12 @@
 		});
 
 		document.getElementById("interval").innerHTML = (slider1.interval/1000) + " sec";
+
+		document.getElementById("change-interval").addEventListener("click", function() {
+			var interval = document.getElementById("new-interval").value;
+			slider1.changeInterval(interval);
+			document.getElementById("interval").innerHTML = (slider1.interval/1000) + " sec";		
+		})
 	</script>
 </body>
 </html>
