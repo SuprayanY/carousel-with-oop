@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Slider</title>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+	<meta name="description" content="slider for blibli training">
+	<meta name="author" content="Suprayan Yapura">
+	<meta name="created-date" content="March 7, 2018">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			outline: none;
+			display: relative;
+			box-sizing: border-box;
+		}
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			background: rgba(0,0,0,0.01);
+		}
+
+		.container,
+		.slider-container {
+			width: 80%;
+			height: auto;
+			margin: auto;
+			overflow: hidden;
+			background: white;
+			box-shadow: 0 0 5px rgba(0,0,0,0.2);
+		}
+
+		.slider {
+			transition: margin 0.5s;
+		}
+
+		.slider-img {
+
+			float: left;
+			display: inline-block;
+		}
+
+		.lay-4 {
+			width: 25%;
+			float: left;
+			display: inline-block;
+		}
+
+		.btn {
+			width: 100%;
+			padding: 10px;
+			cursor: pointer;
+			background: white;
+			display: inline-block;
+			filter: brightness(100%);
+			border: 3px solid transparent;
+
+			transition: filter 0.3s;
+		}
+
+		.btn:hover {
+			border-bottom: 3px solid rgb(0,150,217);
+		}
+
+		.btn:active {
+			filter: brightness(95%);
+		}
+	</style>
+</head>
+<body>
+	<div id="slider-1" class="slider-container" style="margin-top: 20px;">
+		<div class="slider">
+			<img class="slider-img" src="1.jpg">
+			<img class="slider-img" src="2.jpg">
+			<img class="slider-img" src="3.jpg">
+			<img class="slider-img" src="4.jpg">
+			<img class="slider-img" src="5.jpg">
+			<img class="slider-img" src="6.jpg">
+		</div>
+	</div>
+	<div class="container">
+		<div class="lay-4"><button id="btn-prev" class="btn">PREVIOUS</button></div>
+		<div class="lay-4"><button id="btn-play" class="btn">PLAY</button></div>
+		<div class="lay-4"><button id="btn-pause" class="btn">PAUSE</button></div>
+		<div class="lay-4"><button id="btn-next" class="btn">NEXT</button></div>
+	</div>
+	<div class="container" style="padding: 5px 15px">
+		<span>Slide : </span><span id="message"></span><br/>
+		<span>interval : </span><span id="interval"></span>
+	</div>
+	<script>
+		function createSlider(containerID) {
+			var obj = {};
+
+			obj.init = function() {
+				obj.container = document.getElementById(containerID);
+				obj.slider = obj.container.getElementsByClassName("slider")[0];
+				obj.sliderImgs = obj.slider.getElementsByClassName("slider-img");
+
+				var contWidth = window.getComputedStyle(obj.container, null).width.replace("px","");
+				contWidth = parseFloat(contWidth);
+				obj.containerWidth = contWidth;
+
+				for(var i=0; i<obj.sliderImgs.length; i++) {
+					obj.sliderImgs[i].style.width = contWidth + "px";
+				}
+				var width = (obj.sliderImgs.length * contWidth) + "px";
+				obj.slider.style.width = width;
+
+				obj.isPlay = false;
+				obj.currSlide = 1;
+				obj.count = obj.sliderImgs.length;
+				obj.animation = null;
+				obj.interval = 1000;
+			}
+
+			obj.next = function() {
+				if(obj.currSlide == obj.count) {
+					obj.currSlide = 1;
+				}
+				else {
+					obj.currSlide++;
+				}
+				obj.change();
+			}
+
+			obj.prev = function() {
+				if(obj.currSlide == 1) {
+					obj.currSlide = obj.count;
+				}
+				else {
+					obj.currSlide--;
+				}
+				obj.change();
+			}
+
+			obj.change = function() {
+				var margin = (obj.currSlide - 1) * obj.containerWidth;
+				obj.slider.style.marginLeft = -margin + "px";
+				document.getElementById("message").innerHTML = (obj.currSlide + "/" + obj.count);
+			}			
+
+			obj.start = function() {
+				if(obj.isPlay === true) return;
+
+				obj.animation = setInterval(obj.next, obj.interval);
+				obj.isPlay = true;
+			}
+
+			obj.stop = function() {
+				if(obj.isPlay === false) return;
+
+				window.clearInterval(obj.animation);
+				obj.isPlay = false;
+			}
+
+			obj.init();
+			obj.start();
+			window.addEventListener("resize", function() {
+				obj.init();
+			});
+
+			return obj;
+		}
+
+		var slider1 = createSlider("slider-1");
+
+		document.getElementById("btn-prev").addEventListener("click", function() {
+			slider1.prev();
+		});
+
+		document.getElementById("btn-play").addEventListener("click", function() {
+			slider1.start();
+		});
+
+		document.getElementById("btn-pause").addEventListener("click", function() {
+			slider1.stop();
+		});
+
+		document.getElementById("btn-next").addEventListener("click", function() {
+			slider1.next();
+		});
+
+		document.getElementById("interval").innerHTML = (slider1.interval/1000) + " sec";
+	</script>
+</body>
+</html>
+
